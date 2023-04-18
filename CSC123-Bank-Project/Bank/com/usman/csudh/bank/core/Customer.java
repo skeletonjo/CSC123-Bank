@@ -25,6 +25,7 @@ public class Customer implements Serializable{
 	private String firstName;
 	private String lastName;
 	private String ssn;
+	private String Currency;
 	
 	
 	/**********************************
@@ -36,10 +37,11 @@ public class Customer implements Serializable{
 	 **********************************/
 	
 
-	public Customer(String fName, String lName, String ssn) {
+	public Customer(String fName, String lName, String ssn, String currency) {
 		setFirstName(fName);
 		setLastName(lName);
 		setSSN(ssn);
+		setCurrency(currency);
 		
 	}
 	
@@ -49,6 +51,7 @@ public class Customer implements Serializable{
 		this.firstName=p.getFirstName();
 		this.lastName=p.getLastName();
 		this.ssn=p.getSSN();
+		this.Currency=p.getCurrency();
 	}	
 	
 	/**********************************
@@ -76,6 +79,10 @@ public class Customer implements Serializable{
 	public void setSSN(String s) {
 		ssn=s;
 	}
+	public void setCurrency(String c)
+	{
+		Currency=c;
+	}
 
 	public String getFirstName() {
 		return firstName;
@@ -90,6 +97,10 @@ public class Customer implements Serializable{
 		return ssn;
 	}
 	
+	public String getCurrency()
+	{
+		return Currency;
+	}
 
 
 	
@@ -103,7 +114,7 @@ public class Customer implements Serializable{
 	@Override
 	public String toString() {
 		
-		return firstName+" : "+lastName+" : "+ssn; 
+		return firstName+" : "+lastName+" : "+ssn+ " : " +Currency; 
 	}
 	
 	/**
@@ -117,7 +128,8 @@ public class Customer implements Serializable{
 		Customer other=(Customer)obj;
 		return this.firstName.equalsIgnoreCase(other.getFirstName())
 				&&this.lastName.equalsIgnoreCase(other.getLastName())
-						&&this.ssn.equalsIgnoreCase(other.getSSN());
+						&&this.ssn.equalsIgnoreCase(other.getSSN())
+							&&this.Currency.equalsIgnoreCase(other.getCurrency());
 	}
 	
 	

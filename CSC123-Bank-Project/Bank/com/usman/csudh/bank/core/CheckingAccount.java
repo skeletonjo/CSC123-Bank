@@ -9,6 +9,7 @@ public class CheckingAccount extends Account implements Serializable{
 	public CheckingAccount(Customer customer,double od) {
 		super("Checking",customer);
 		this.overdraftLimit=od;
+		
 	}
 
 
