@@ -54,7 +54,7 @@ public class MainBank {
 	
 	
 	//Main method. 
-	public static void main(String[] args) throws IOException {
+	public static void main(String[] args) throws NumberFormatException, Exception {
 		
 		new MainBank(System.in,System.out).run();
 
@@ -62,7 +62,7 @@ public class MainBank {
 	
 	
 	//The core of the program responsible for providing user experience.
-	public void run() throws IOException {
+	public void run() throws NumberFormatException, Exception {
 
 		Account acc;
 		int option = 0;
@@ -112,15 +112,12 @@ public class MainBank {
 					
 					break;
 				case 5:
-				{
 					try {
 						Bank.printAccountInformation(ui.readInt(MSG_ACCOUNT_NUMBER),this.out);
-					} catch (NoSuchAccountException e1) {
-						this.handleException(ui, e1);
-
-					}		
-					
-				}
+					}
+					catch (NoSuchAccountException e1) {
+							this.handleException(ui, e1);
+					}
 				break;
 
 				case 6:
