@@ -14,6 +14,12 @@ import java.io.FileNotFoundException;
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.FileWriter;
+import java.net.URI;
+import java.net.http.HttpClient;
+import java.net.http.HttpRequest;
+import java.net.http.HttpResponse;
+import java.nio.charset.StandardCharsets;
+import java.io.InputStreamReader;
 //Joseph Lewis jlewis157@toromail.csudh.edu
 public class Bank {
 	
@@ -43,7 +49,10 @@ public class Bank {
 		if(!accounts.containsKey(accountNumber)) {
 			throw new NoSuchAccountException("\nAccount number: "+accountNumber+" nout found!\n\n");
 		}
-		
+		Customer c = new Customer();
+		Account information = accounts.get(accountNumber);
+		String[] split = information.toString().split(":");
+		System.out.println(split);
 		return accounts.get(accountNumber);
 	}
 	public static Account information(int accountNumber) throws NoSuchAccountException{
@@ -91,26 +100,67 @@ public class Bank {
 	public static void printAccountTransactions(int accountNumber, OutputStream out) throws IOException,NoSuchAccountException{
 		
 		lookup(accountNumber).printTransactions(out);
+		
 	}
 	public static void printAccountInformation(int accountNumber, OutputStream out) throws IOException, NoSuchAccountException
 	{
+		//Customer c=new Customer("","", "", "");
+		Customer cu = new Customer();
+		out.write((byte)10);
+		Collection<Account> col=accounts.values();
+		
+		for (Account a:col) {
+			
+			out.write(cu.getAllInformation().getBytes());
+			//out.write((byte)10);
+		}
+		
+		out.write((byte)10);
+		out.flush();
+		//System.out.println(c.getAllInformation());
 		
 	}
 	
-	public static boolean getExchangeFile() throws IOException, NumberFormatException
+	public static boolean getExchangeFile() throws IOException, NumberFormatException, Exception
 		
 		{try 
 		{
-			File exchangeRateFile=new File("exchange-rate.csv");  //Paths for exchange Files
+			/*File exchangeRateFile=new File("exchange-rate.csv");  //Paths for exchange Files
 			Scanner reader = new Scanner(exchangeRateFile);
-			FileReader read = new FileReader("exchange-rate.csv"); //Paths for exchange File
+			FileReader read = new FileReader("exchange-rate.csv"); //Paths for exchange File*/
+			HttpClient client = HttpClient.newHttpClient();
+			HttpRequest request = HttpRequest.newBuilder()
+			.uri(URI.create("http://www.usman.cloud/banking/exchange-rate.csv"))
+			.build();
+			HttpResponse<String> response = client.send(request,  HttpResponse.BodyHandlers.ofString(StandardCharsets.UTF_8));
+			String fileContents = response.body();
+			//System.out.println(fileContents);
+			//return true;
 			int count = 0;
-			String Line1 = "";
-			BufferedReader buffreader = new BufferedReader(read);
-			/*while ((Line1 = buffreader.readLine()) !=null) // This is to print entire file
+			String fileContentsSplit = "";
+			String[] lines= fileContents.split(System.lineSeparator());
+			double exchangeRat = 0.0;
+			for (String l : lines)
+			{
+				String s = l;
+				String[] parts = s.split(",", 3);
+				String Currency = "", countryname = "", exchangeString = "";
+				Currency = parts[0];
+				countryname = parts[1];
+				exchangeString = parts[2];
+				exchangeRat = Double.parseDouble(exchangeString);
+				String format = String.format("%.3f", exchangeRat);
+				exchangeRat = Double.parseDouble(format);
+				Currency c = new Currency(Currency, countryname, exchangeRat);
+
+			}
+			
+			/*BufferedReader buffreader = new BufferedReader(read);
+			
+			while ((Line1 = buffreader.readLine()) !=null) // This is to print entire file
 			{
 				System.out.println(Line1);
-			}	*/
+			}	
 			if (!exchangeRateFile.exists())
 			{
 				System.out.println("Fileexists");
@@ -129,8 +179,6 @@ public class Bank {
 				String format = String.format("%.3f", exchangeRat);
 				exchangeRat = Double.parseDouble(format);
 				Currency c = new Currency(Currency, countryname, exchangeRat);
-					
-				
 			}
 			if (exchangeRateFile.exists())
 			{
@@ -139,7 +187,8 @@ public class Bank {
 			else
 			{
 				return false;
-			}
+			}*/
+			return true;
 		
 		
 		}catch (FileNotFoundException w )
@@ -179,54 +228,13 @@ public class Bank {
 			System.out.println("The currency does not exist");
 		}
 		
-		/*System.out.println(c.getCurrencyName());
-		System.out.println(c.getCountryName());
-		System.out.println(c.getExchangeRate()); 
-		*/
-		
-		
-		
-		
-		/*String key = firstCountry;
-		String USA = "USD";
-		Double value = exchange.get(key);
-		double firstvalue = 0;
-		if (value!=null) 
-		{
-			System.out.println(key + "\n" + value);
-			firstvalue = value;
-		}
-		else { System.out.println( "Error");}
-		System.out.println("Please enter the currency you are currently using");
-		String keying = secondCountry;
-		double secondvalue = 0;
-		key = keying;
-		Double values = exchange.get(key);
-		if (values!=null) 
-		{
-			System.out.println(key + "\n" + values);
-			secondvalue = values;
-		}
-		else System.out.println("Something went wrong");
-		System.out.println("Please enter the amount you are selling");
-		double selling = keyboards.nextDouble();
-		if (!(inp.equals(USA)) && !(keying.equals(USA)))
-		{
-			System.out.println("One of the currencies has to be USD");
-		}
-		else if(inp.equals(USA) || keying.equals(USA))
-		{
-			double finalvalue = (firstvalue*selling) * secondvalue;
-			System.out.printf("The exchange rate is %.2f and you will be getting %.2f ", values, finalvalue);
-			
-		}
-		System.out.println("\n");*/
 		
 		
 		
 	}
 	public static Object ReturnAccounts()
 	{
+		
 		return accounts;
 	}
 	

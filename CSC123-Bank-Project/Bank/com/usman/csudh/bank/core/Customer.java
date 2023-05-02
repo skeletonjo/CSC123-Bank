@@ -116,6 +116,11 @@ public class Customer implements Serializable{
 		
 		return firstName+" : "+lastName+" : "+ssn+ " : " +Currency; 
 	}
+	public String getAllInformation()
+	
+	{
+		return "Name: " + firstName +" " + lastName + "\nSSN: " + ssn+ "Currency: " + Currency;
+	}
 	
 	/**
 	 * 
@@ -131,6 +136,7 @@ public class Customer implements Serializable{
 						&&this.ssn.equalsIgnoreCase(other.getSSN())
 							&&this.Currency.equalsIgnoreCase(other.getCurrency());
 	}
+	
 	
 	
 	

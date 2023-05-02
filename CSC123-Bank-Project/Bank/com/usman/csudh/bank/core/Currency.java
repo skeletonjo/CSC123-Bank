@@ -94,5 +94,14 @@ public class Currency extends Bank{
 			return null;
 		}*/
 	}
+	public Double getExchangeCurrency (String key)
+	{
+		if (exchange.get(key) == null)
+		{
+			System.out.println("Currency is wrong");
+			return null;
+		}
+		else return exchange.get(key);
+	}
 
 }
