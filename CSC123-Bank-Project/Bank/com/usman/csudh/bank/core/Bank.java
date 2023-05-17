@@ -8,6 +8,8 @@ import java.util.Collection;
 import java.util.Map;
 import java.util.Scanner;
 import java.util.TreeMap;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
 import java.util.concurrent.RejectedExecutionHandler;
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -25,6 +27,8 @@ public class Bank {
 	
 	private static Map<Integer,Account> accounts=new TreeMap<Integer,Account>();
 	private static boolean fileexistence;
+	private static boolean configfileexistence;
+	private static int count = -1;
 	public static Account openCheckingAccount(String firstName, String lastName, String ssn, String currency, double overdraftLimit) {
 			Customer c=new Customer(firstName,lastName, ssn, currency);
 			Account a=new CheckingAccount(c,overdraftLimit);
@@ -121,51 +125,58 @@ public class Bank {
 		
 	}
 	
-	public static boolean getExchangeFile() throws IOException, NumberFormatException, Exception
+	public static boolean getExchangeFile(String configfileresult) throws IOException, NumberFormatException, Exception
 		
 		{try 
 		{
-			/*File exchangeRateFile=new File("exchange-rate.csv");  //Paths for exchange Files
+		/*
+			File exchangeRateFile=new File("exchange-rate.csv");  //Paths for exchange Files
 			Scanner reader = new Scanner(exchangeRateFile);
 			FileReader read = new FileReader("exchange-rate.csv"); //Paths for exchange File*/
-			HttpClient client = HttpClient.newHttpClient();
+			/*HttpClient client = HttpClient.newHttpClient();
 			HttpRequest request = HttpRequest.newBuilder()
 			.uri(URI.create("http://www.usman.cloud/banking/exchange-rate.csv"))
 			.build();
-			HttpResponse<String> response = client.send(request,  HttpResponse.BodyHandlers.ofString(StandardCharsets.UTF_8));
-			String fileContents = response.body();
+			HttpResponse<String> response = client.send(request,  HttpResponse.BodyHandlers.ofString(StandardCharsets.UTF_8));*/
+			String fileContents = configfileresult;
+			//System.out.println(fileContents);
 			//System.out.println(fileContents);
 			//return true;
 			int count = 0;
 			String fileContentsSplit = "";
+			String[] multiplelines = fileContents.split("\n");
+
 			String[] lines= fileContents.split(System.lineSeparator());
 			double exchangeRat = 0.0;
-			for (String l : lines)
+			String k = "";
+			for (int a = 0; a < multiplelines.length; a++)
 			{
-				String s = l;
-				String[] parts = s.split(",", 3);
-				String Currency = "", countryname = "", exchangeString = "";
-				Currency = parts[0];
-				countryname = parts[1];
-				exchangeString = parts[2];
-				exchangeRat = Double.parseDouble(exchangeString);
-				String format = String.format("%.3f", exchangeRat);
-				exchangeRat = Double.parseDouble(format);
-				Currency c = new Currency(Currency, countryname, exchangeRat);
-
+				
+				//for (String l : lines)
+				
+					String s = multiplelines[a];
+					String[] parts = s.split(",", 3);
+					String Currency = "", countryname = "", exchangeString = "";
+					Currency = parts[0];
+					countryname = parts[1];
+					exchangeString = parts[2];
+					
+					exchangeRat = Double.parseDouble(exchangeString);
+					
+					String format = String.format("%.3f", exchangeRat);
+					exchangeRat = Double.parseDouble(format);
+					Currency c = new Currency(Currency, countryname, exchangeRat);
+					
+				
 			}
+			//BufferedReader buffreader = new BufferedReader(read);
 			
-			/*BufferedReader buffreader = new BufferedReader(read);
 			
-			while ((Line1 = buffreader.readLine()) !=null) // This is to print entire file
-			{
-				System.out.println(Line1);
-			}	
-			if (!exchangeRateFile.exists())
+			/*if (!exchangeRateFile.exists())
 			{
 				System.out.println("Fileexists");
-			}
-			double exchangeRat = 0.0;
+			}*/
+			/*double exchangeRat = 0.0;
 			while (reader.hasNextLine() && (Line1 = buffreader.readLine()) !=null )
 			{
 				
@@ -179,19 +190,20 @@ public class Bank {
 				String format = String.format("%.3f", exchangeRat);
 				exchangeRat = Double.parseDouble(format);
 				Currency c = new Currency(Currency, countryname, exchangeRat);
-			}
-			if (exchangeRateFile.exists())
+			}*/
+			if (configfileexistence == true)
 			{
+				fileexistence = true;
 				return true;
 			}
 			else
 			{
+				fileexistence = false;
 				return false;
-			}*/
-			return true;
+			}
 		
-		
-		}catch (FileNotFoundException w )
+			
+		}catch (Exception w )  //was FileNotFoundException
 		{
 			System.out.println("Error finding the exchange file");
 			fileexistence = false;
@@ -202,6 +214,93 @@ public class Bank {
 			
 		}
 		
+	}
+	public static String getConfigFile() throws IOException, NumberFormatException, Exception
+	
+	{int count = 0;
+		try 
+		{
+		ConfigTemplate currencyresult = null;
+		String returnresult;
+		String filePathString = "config.txt";
+		File configFile=new File(filePathString);  //Paths for exchange Files
+		BufferedReader br = new BufferedReader(new FileReader(configFile));
+		String lines = "";
+		
+		boolean configfileboolean;
+		//Scanner reading = new Scanner(filePathString);
+		if (br.readLine().contains("true"))
+		{
+			configfileboolean = true;
+		}
+		else
+		{
+			configfileboolean = false;
+		}
+		String[] temparray;
+		String stringresult = "";
+		String rea = "";
+		while ((lines = br.readLine())!=null)
+		{
+			if (configfileboolean = true)
+			{
+				
+				if (lines.contains("file")&& count==0)
+				{
+					currencyresult = ConfigTemplate.getInstance("file");
+					/*returnresult = currencyresult.toString();
+					stringresult = currencyresult.toString();
+					System.out.println(stringresult);
+					return returnresult;*/
+					for (String line: currencyresult.readExchange())
+					{
+						rea = rea + line + "\n";
+						count++;
+						
+					}
+				}
+				if (lines.contains("webservice")&& count == 0)
+				{
+					currencyresult = ConfigTemplate.getInstance("webservice");
+					returnresult = currencyresult.toString();
+					//System.out.println(returnresult);
+					stringresult = currencyresult.toString();
+					/*System.out.println(stringresult);
+					return returnresult;*/
+					for (String line: currencyresult.readExchange())
+					{
+						rea = rea + line + "\n";
+						count++;
+						
+					}
+					count++;
+				}
+				
+				
+			}
+			
+			
+			if (configfileboolean = false)
+			{
+				System.out.println("Currencies are not supported");
+				configfileexistence = false;
+			}
+			configfileexistence = true;
+			return rea;
+			
+
+		}
+		System.out.println(rea);
+		//return "Something went wrong";
+		
+		return "There is something wrong with the config file";
+		}
+	catch (Exception w)
+		{
+			
+			configfileexistence = false;
+			return "Error finding the config file";
+		}
 	}
 	public boolean getFileExistence()
 	{
@@ -238,6 +337,21 @@ public class Bank {
 		return accounts;
 	}
 	
+	public static String getExchangeLine(String exchangeContents)
+	{
+		String exchange = exchangeContents;
+		String line = "";
+		String[] numberoflines = exchange.split("\n");
+		int countlines = numberoflines.length;
+		String[] exchangearray = exchange.split("\n", numberoflines.length);
+		for (int i = 0; i <= countlines; i++)
+		{
+			count++;
+			System.out.println();
+			return exchangearray[count];
+		}
+		return null;
+	}
 	
 	
 }
