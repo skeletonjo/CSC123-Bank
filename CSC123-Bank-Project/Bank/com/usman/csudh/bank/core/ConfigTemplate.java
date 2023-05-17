@@ -2,18 +2,18 @@ package com.usman.csudh.bank.core;
 import java.util.*;
 import java.io.*;
 public abstract class ConfigTemplate {
-	public static String result;
+	public static String exchangeinfo;
 	public static ConfigTemplate getInstance(String configinput) throws Exception
 	{
 		
 		if (configinput.equalsIgnoreCase("file"))
 		{
-			result = new HooksFile().toString();
+			exchangeinfo = new HooksFile().toString();
 			return new HooksFile();
 		}
-		else // (configinput.equalsIgnoreCase("webservice"))
+		else 
 		{
-			result = new HooksHTTP().toString();
+			exchangeinfo = new HooksHTTP().toString();
 			return new HooksFile();
 		}
 		//return null;
@@ -28,18 +28,15 @@ protected abstract InputStream getInputStream() throws Exception;
 		//Create stream readers / buffered reader
 		BufferedReader br=new BufferedReader(new InputStreamReader(in));
 		
-		ArrayList<String> list=new ArrayList<String>();
+		ArrayList<String> array=new ArrayList<String>();
 		
 		String line=null;
 		//read lines 
 		while((line=br.readLine())!=null) {
-			//add lines to arraylist
-			list.add(line);
+			
+			array.add(line);
 		}
-		
-		//return array list 
-		
-		return list;
+		return array;
 		
 	}
 }
