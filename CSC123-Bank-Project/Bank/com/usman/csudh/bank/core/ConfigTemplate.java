@@ -18,20 +18,14 @@ public abstract class ConfigTemplate {
 		}
 		//return null;
 	}
-	//protected abstract InputStream getInputStream() throws Exception;
-	
 protected abstract InputStream getInputStream() throws Exception; 
 	
 	public ArrayList<String> readExchange() throws Exception{
-		//get an input steam
+		
 		InputStream in=getInputStream();
-		//Create stream readers / buffered reader
 		BufferedReader br=new BufferedReader(new InputStreamReader(in));
-		
 		ArrayList<String> array=new ArrayList<String>();
-		
-		String line=null;
-		//read lines 
+		String line=null; 
 		while((line=br.readLine())!=null) {
 			
 			array.add(line);
