@@ -68,7 +68,8 @@ public class MainBank {
 		int option = 0;
 
 		UIManager ui = new UIManager(this.in,this.out,menuOptions,MSG_PROMPT);
-		Bank.getExchangeFile();
+		Bank.getExchangeFile(Bank.getConfigFile());
+		
 		try {
 
 			do {
